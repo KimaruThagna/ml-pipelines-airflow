@@ -28,14 +28,16 @@ def get_basket_analysis_dataset():
     '''
     group by purchase ID and store data
     '''
-    pass
+    transaction_df = pd.read_csv('faux_data_lake/transaction_df.csv')
+    transaction_df.to_csv('faux_data_lake/basket_analysis.csv')
 
 
 def get_recommendation_engine_dataset(): 
     '''
     group by user ID and send to data lake as dataset
     '''
-    pass
+    transaction_df = pd.read_csv('faux_data_lake/transaction_df.csv')
+    transaction_df.to_csv('faux_data_lake/recommendation_engine_analysis.csv')
 
 
 
