@@ -19,4 +19,4 @@ def transactions():
     return jsonify(generate_fake_transaction_data())
 
 
-app.run()
+app.run(host="0.0.0.0", port=5000)
