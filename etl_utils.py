@@ -1,6 +1,8 @@
 import pandas as pd
 import requests
 
+# modeled as extraction jobs
+
 def pull_user_data(): 
     user_data = requests.get('http://0.0.0.0:5000/users')
     user_df = pd.read_json(user_data.json())
@@ -16,6 +18,7 @@ def pull_transaction_data():
     transaction_df = pd.read_json(transaction_data.json())
     transaction_df.to_csv('faux_data_lake/transaction_df.csv')
 
+# modeled as transformation jobs
 
 def get_platinum_customer(): 
     '''
@@ -39,6 +42,9 @@ def get_recommendation_engine_dataset():
     transaction_df = pd.read_csv('faux_data_lake/transaction_df.csv')
     transaction_df.to_csv('faux_data_lake/recommendation_engine_analysis.csv')
 
+# modeled as loading job
 
+def load_platinum_customers_to_db(): 
+    pass
 
 
