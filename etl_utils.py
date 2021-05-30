@@ -18,14 +18,23 @@ def pull_transaction_data():
 
 
 def get_platinum_customer(): 
+    '''
+    a platinum customer has purchased goods worth over 5000 and store in DB
+    '''
     pass
 
 
 def get_basket_analysis_dataset(): 
+    '''
+    group by purchase ID and store data
+    '''
     pass
 
 
 def get_recommendation_engine_dataset(): 
+    '''
+    group by user ID and send to data lake as dataset
+    '''
     pass
 
 
