@@ -1,18 +1,22 @@
-from flask import jsonify
-from flask.app import app
-from .data_generator import *
+from flask import jsonify, Flask
+from data_generator import *
+
+app = Flask(__name__)
 
 @app.route("/products")
 def products():
-    return jsonify(generate_fake_products)
+    return jsonify(generate_fake_products())
 
 
 @app.route("/users")
-def products():
-    return jsonify(generate_fake_users)
+def users():
+    return jsonify(generate_fake_users())
 
 
 
-@app.route("/trnsactions")
-def products():
-    return jsonify(generate_fake_transaction_data)
+@app.route("/transactions")
+def transactions():
+    return jsonify(generate_fake_transaction_data())
+
+
+app.run()
