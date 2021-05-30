@@ -1,48 +1,18 @@
-from faker import Faker
-from random import randint
+from flask import jsonify
+from flask.app import app
+from .data_generator import *
 
-faker = Faker()
+@app.route("/products")
+def products():
+    return jsonify(generate_fake_products)
 
-# generate fake data to be used as ecommerce transaction data
 
-def generate_fake_users():
-    users = []
-    for i in range(30):
-        users.append(
-            {
-                "user_id":i,
-                "name":faker.name(),
-                "address":faker.address(),
-                "email":faker.email(),
-            }
-        )
-    return users
- 
-def generate_fake_products():
-    products = []
-    for i in range(50):
-         products.append(
-             {
-                 "product_name":f'product{faker.name()}',
-                 "product_id":i,
-                 "product_description":faker.text(40),
-                 "price":randint(100,1000)
-                 
-             }
-         )
-    return products
-         
-         
-         
-def generate_fake_transaction_data():
-    transaction_data = []
-    for i in range(300):
-        transaction_data.append(
-             {
-            "user_id":randint(1,20),
-            "purchase_id":randint(1,10), # allow repitition
-            "product_id": randint(1,10),
-            "quantity":randint(1,5),
-            }
-        )
-    return transaction_data
+@app.route("/users")
+def products():
+    return jsonify(generate_fake_users)
+
+
+
+@app.route("/trnsactions")
+def products():
+    return jsonify(generate_fake_transaction_data)
