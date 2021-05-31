@@ -1,15 +1,23 @@
 import pandas as pd
 import requests
 import numpy as np
-
+import psycopg2
 '''
 The faux data lake is to represent a cloud based storage like s3 or GCS
 '''
 
 def _load_platinum_customers_to_db(df): 
-     engine = sqlalchemy.create_engine(DATABASE_LOCATION)
-    conn = sqlite3.connect('my_played_tracks.sqlite')
-    cursor = conn.cursor()
+    connection = psycopg2.connect(user="postgres",
+                                  password="postgres",
+                                  host="127.0.0.1",
+                                  port="5432",
+                                  database="customers")
+
+     
+    cursor = connection.cursor()
+    # Print PostgreSQL details
+    print("PostgreSQL server information")
+    print(connection.get_dsn_parameters(), "\n")
 
     sql_query = """
     CREATE TABLE IF NOT EXISTS platinum_customers(
