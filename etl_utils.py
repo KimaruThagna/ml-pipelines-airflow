@@ -26,9 +26,14 @@ def pull_transaction_data():
 
 def get_platinum_customer(): 
     '''
-    a platinum customer has purchased goods worth over 5000 and store in DB
+    a platinum customer has purchased goods worth over 5000 
     '''
-    pass
+    transaction_df = pd.read_csv('faux_data_lake/transaction_df.csv')
+    user_df = pd.read_csv('faux_data_lake/user_df.csv')
+    # also need product df for product price
+    product_df = pd.read_csv('faux_data_lake/product_df.csv')
+    user_product_data = pd.merge(user_df,transaction_df)
+    enriched_customer_data = pd.merge(user_product_data,product_df)
 
 
 def get_basket_analysis_dataset(): 
