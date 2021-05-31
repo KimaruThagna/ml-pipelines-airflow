@@ -1,4 +1,7 @@
-from airflow.dags import DAG
+from airflow import DAG
+from airflow.operators.bash import BashOperator
+from airflow.utils.task_group import TaskGroup
+
 from datetime import datetime, timedelta
 default_args = {
     "owner": "airflow",
@@ -12,4 +15,5 @@ default_args = {
     "catchup": False,
 }
 
-dag = DAG("ECOMMERCE_ETL_DAG", default_args=default_args, schedule_interval=timedelta(days=1))
+with DAG("ECOMMERCE_ETL_DAG", default_args=default_args, schedule_interval=timedelta(days=1)) as dag: 
+    

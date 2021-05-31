@@ -1,6 +1,9 @@
 import pandas as pd
 import requests
 
+'''
+The faux data lake is to represent a cloud based storage like s3 or GCS
+'''
 # modeled as extraction jobs
 
 def pull_user_data(): 
@@ -46,5 +49,6 @@ def get_recommendation_engine_dataset():
 
 def load_platinum_customers_to_db(): 
     pass
+
 
 
