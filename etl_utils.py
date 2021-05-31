@@ -50,7 +50,10 @@ def get_platinum_customer():
                                                        'product_name':pd.Series.mode}) # most common product
     # filter platinum customers PREDICATE: total_purchase_value>=5000
     platinum_customers = lean_customer_data.loc[lean_customer_data['total_purchase_value'] >= 5000]
-
+    # save to csv file
+    platinum_customers.to_csv('aux_data_lake/platinum_customers')
+    
+    
 def get_basket_analysis_dataset(): 
     '''
     group by purchase ID and store data
