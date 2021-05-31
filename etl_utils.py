@@ -19,7 +19,7 @@ def _load_platinum_customers_to_db(df):
     print("PostgreSQL server information")
     print(connection.get_dsn_parameters(), "\n")
 
-    sql_query = """
+    create_table_query = """
     CREATE TABLE IF NOT EXISTS platinum_customers(
         user_id INTEGER PRIMARY KEY not null,
         product_name VARCHAR(200) not null,
@@ -28,16 +28,20 @@ def _load_platinum_customers_to_db(df):
     )
     """
 
-    cursor.execute(sql_query)
-    print("Opened database successfully")
 
     try:
-        df.to_sql("my_played_tracks", engine, index=False, if_exists='append')
-    except:
-        print("Data already exists in the database")
-
-    conn.close()
-    print("Close database successfully")
+        cursor.execute(create_table_query)
+        connection.commit()
+        print("Table created successfully in PostgreSQL ")
+        df.to_sql("platinum_customers", connection, index=False, if_exists='append')
+        
+    except (Exception) as error:
+        print("Error while connecting to PostgreSQL", error)
+    finally:
+        if connection:
+            cursor.close()
+            connection.close()
+            print("PostgreSQL connection is closed")
     
 
 # modeled as extraction jobs
