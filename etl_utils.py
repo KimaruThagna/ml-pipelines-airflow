@@ -5,6 +5,33 @@ import numpy as np
 '''
 The faux data lake is to represent a cloud based storage like s3 or GCS
 '''
+
+def _load_platinum_customers_to_db(df): 
+     engine = sqlalchemy.create_engine(DATABASE_LOCATION)
+    conn = sqlite3.connect('my_played_tracks.sqlite')
+    cursor = conn.cursor()
+
+    sql_query = """
+    CREATE TABLE IF NOT EXISTS platinum_customers(
+        user_id INTEGER PRIMARY KEY not null,
+        product_name VARCHAR(200) not null,
+        total_purchase_value FLOAT not null,
+        timestamp date not null default CURRENT_DATE
+    )
+    """
+
+    cursor.execute(sql_query)
+    print("Opened database successfully")
+
+    try:
+        df.to_sql("my_played_tracks", engine, index=False, if_exists='append')
+    except:
+        print("Data already exists in the database")
+
+    conn.close()
+    print("Close database successfully")
+    
+
 # modeled as extraction jobs
 
 def pull_user_data(): 
@@ -83,8 +110,6 @@ def get_recommendation_engine_dataset():
 
 # modeled as loading job
 
-def load_platinum_customers_to_db(): 
-    pass
 
 
 
