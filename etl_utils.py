@@ -5,7 +5,7 @@ import psycopg2
 '''
 The faux data lake is to represent a cloud based storage like s3 or GCS
 '''
-
+# modeled as loading job
 def _load_platinum_customers_to_db(df): 
     connection = psycopg2.connect(user="postgres",
                                   password="postgres",
@@ -91,6 +91,8 @@ def get_platinum_customer():
     platinum_customers = lean_customer_data.loc[lean_customer_data['total_purchase_value'] >= 5000]
     # save to csv file
     platinum_customers.to_csv('aux_data_lake/platinum_customers')
+    # to database
+    _load_platinum_customers_to_db(platinum_customers)
     
     
 def get_basket_analysis_dataset(): 
@@ -120,7 +122,7 @@ def get_recommendation_engine_dataset():
     transaction_lean_customer_data.to_csv('faux_data_lake/recommendation_engine_analysis.csv')
     
 
-# modeled as loading job
+
 
 
 
