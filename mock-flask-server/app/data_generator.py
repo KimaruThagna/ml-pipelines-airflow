@@ -42,7 +42,7 @@ def generate_fake_transaction_data():
             "user_id":randint(1,20),
             "purchase_id":randint(1,10), # allow repitition
             "product_id": randint(1,10),
-            "quantity":randint(1,5),
+            "quantity":randint(3,7),
             }
         )
     return transaction_data

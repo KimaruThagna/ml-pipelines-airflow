@@ -30,10 +30,17 @@ def get_platinum_customer():
     '''
     transaction_df = pd.read_csv('faux_data_lake/transaction_df.csv')
     user_df = pd.read_csv('faux_data_lake/user_df.csv')
+    user_product_data = pd.merge(user_df,transaction_df)
     # also need product df for product price
     product_df = pd.read_csv('faux_data_lake/product_df.csv')
-    user_product_data = pd.merge(user_df,transaction_df)
+    product_df = product_df[['product_id','price']]
+    
     enriched_customer_data = pd.merge(user_product_data,product_df)
+    enriched_customer_data['total_purchase_value'] = enriched_customer_data['quantity']* enriched_customer_data['price']
+    # get total purchase value per customer
+    grouped_data = enriched_customer_data.groupby('user_id', 
+                                                  as_index=False).agg(
+                                                      {'total_purchase_value': ['sum'])
 
 
 def get_basket_analysis_dataset(): 
