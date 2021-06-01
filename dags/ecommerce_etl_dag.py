@@ -71,6 +71,7 @@ with DAG("ECOMMERCE_ETL_DAG", default_args=default_args, schedule_interval=timed
                     task_id='create_table_platinum_customer_table',
                     sql=create_table_query,
                         )
+        
         demo_xcom_pull = PythonOperator(
             task_id='demo_xcom_pull',
             python_callable=demonstrate_xcom_pull
@@ -93,7 +94,8 @@ with DAG("ECOMMERCE_ETL_DAG", default_args=default_args, schedule_interval=timed
         
     # we may want to send an email with files after processing. This can be done via an EmailOperator
     '''
-        send_sample_dataset_email = EmailOperator(task_id='send_sample_dataset_email',
+        send_sample_dataset_email = EmailOperator(
+            task_id='send_sample_dataset_email',
             to='thagana44@gmail.com',
             subject='Ecomm Industries Pipeline Report',
             html_content=""" <h1>Ecomm Industries Daily Summary and error report for {{ ds }}</h1> """,
