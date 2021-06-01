@@ -48,18 +48,18 @@ def _load_platinum_customers_to_db(df):
 
 def pull_user_data(): 
     user_data = requests.get('http://0.0.0.0:5000/users')
-    user_lean_customer_data = pd.read_json(user_data.json())
-    user_lean_customer_data.to_csv('faux_data_lake/user_lean_customer_data.csv')
+    user_data = pd.DataFrame(user_data.json())
+    user_data.to_csv('faux_data_lake/user_lean_customer_data.csv', index=False)
 
 def pull_product_data(): 
     product_data = requests.get('http://0.0.0.0:5000/products')
-    product_lean_customer_data = pd.read_json(product_data.json())
-    product_lean_customer_data.to_csv('faux_data_lake/product_lean_customer_data.csv')
+    product_data = pd.DataFrame(product_data.json())
+    product_data.to_csv('faux_data_lake/product_lean_customer_data.csv', index=False)
 
 def pull_transaction_data(): 
     transaction_data = requests.get('http://0.0.0.0:5000/transactions')
-    transaction_lean_customer_data = pd.read_json(transaction_data.json())
-    transaction_lean_customer_data.to_csv('faux_data_lake/transaction_lean_customer_data.csv')
+    transaction_data = pd.DataFrame(transaction_data.json())
+    transaction_data.to_csv('faux_data_lake/transaction_lean_customer_data.csv', index=False)
 
 # modeled as transformation jobs
 
@@ -127,6 +127,8 @@ def demonstrate_xcom_pull(ti):
     print(retrieved_api_data)
     print(">>>>>>>>>>>>>>>>>>>>>>>>>>")
 
-
+pull_product_data()
+pull_transaction_data()
+pull_user_data()
 
 

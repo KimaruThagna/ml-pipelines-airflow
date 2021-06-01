@@ -21,9 +21,12 @@ default_args = {
     "catchup": False,
 }
 
+
 with DAG("ECOMMERCE_ETL_DAG", default_args=default_args, schedule_interval=timedelta(days=1)) as dag: 
+
     sample_base_filepath = ''
     sample_remote_filepath = ''
+
     with TaskGroup("Extraction_Tasks") as extraction_group: 
         extract_users_task = PythonOperator(
             task_id='extract_users_task',
@@ -39,6 +42,7 @@ with DAG("ECOMMERCE_ETL_DAG", default_args=default_args, schedule_interval=timed
             task_id='extract_teansaction_task',
             python_callable=pull_transaction_data
         )
+        
         #demonstrate HttpOperator. In practice pulling data with lots of records may require
         #SFTPOperator or PythonOperator that can pull process and store data.
         demo_get_from_api = SimpleHttpOperator(
