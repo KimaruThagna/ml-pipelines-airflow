@@ -67,14 +67,14 @@ def get_platinum_customer():
     '''
     a platinum customer has purchased goods worth over 5000 
     '''
-    transaction_lean_customer_data = pd.read_csv('faux_data_lake/transaction_lean_customer_data.csv')
-    user_lean_customer_data = pd.read_csv('faux_data_lake/user_lean_customer_data.csv')
-    user_tx_data = pd.merge(user_lean_customer_data,transaction_lean_customer_data)
+    transaction_data = pd.read_csv('faux_data_lake/transaction_lean_customer_data.csv')
+    user_data = pd.read_csv('faux_data_lake/user_lean_customer_data.csv')
+    user_tx_data = pd.merge(user_data,transaction_data)
     # also need product lean_customer_data for product price
-    product_lean_customer_data = pd.read_csv('faux_data_lake/product_lean_customer_data.csv')
-    product_lean_customer_data = product_lean_customer_data[['product_id','price','product_name']]
+    product_data = pd.read_csv('faux_data_lake/product_lean_customer_data.csv')
+    product_data = product_data[['product_id','price','product_name']]
     
-    enriched_customer_data = pd.merge(user_tx_data,product_lean_customer_data)
+    enriched_customer_data = pd.merge(user_tx_data,product_data)
     # get total value
     enriched_customer_data['total_purchase_value'] = enriched_customer_data['quantity'] * enriched_customer_data['price']
     #retain only the columns necessary for analysis
@@ -99,27 +99,29 @@ def get_basket_analysis_dataset():
     '''
     group by purchase ID and store data
     '''
-    transaction_lean_customer_data = pd.read_csv('faux_data_lake/transaction_lean_customer_data.csv')
-    transaction_lean_customer_data = transaction_lean_customer_data[['product_id','quantity','purchase_id']]
+    transaction_data = pd.read_csv('faux_data_lake/transaction_lean_customer_data.csv')
+    transaction_data = transaction_data[['product_id','quantity','purchase_id']]
+    # group to have unique purchase ID
+    transaction_data.groupby(['purchase_id','product_id']).count()
     # pivot to have purchase ID as index, product IDs as columns and quantity(mean) as the values
     # for basket analysis, one is considering what goes together(cause and effect). So average is a better agg function
-    transaction_lean_customer_data.pivot(index='purchase_id', columns='product_id',values='quantity')
-    transaction_lean_customer_data.to_csv('faux_data_lake/basket_analysis.csv')
+    transaction_data.pivot(index='purchase_id', columns='product_id',values='quantity')
+    transaction_data.to_csv('faux_data_lake/basket_analysis.csv')
 
 
 def get_recommendation_engine_dataset(): 
     '''
     group by user ID and send to data lake as dataset
     '''
-    transaction_lean_customer_data = pd.read_csv('faux_data_lake/transaction_lean_customer_data.csv')
-    transaction_lean_customer_data = transaction_lean_customer_data[['user_id','quantity','product_id']]
+    transaction_data = pd.read_csv('faux_data_lake/transaction_lean_customer_data.csv')
+    transaction_data = transaction_data[['user_id','quantity','product_id']]
     # pivot to have user ID as index, product IDs as columns and quantity(sum) as the values
     # for recommendation engines, it may be critical to know what kind of products are bought in large quantities over time
-    transaction_lean_customer_data = pd.pivot_table(transaction_lean_customer_data,index='user_id', 
+    transaction_data = pd.pivot_table(transaction_data,index='user_id', 
                    columns='product_id',
                    values='quantity', aggfunc=np.sum)
     
-    transaction_lean_customer_data.to_csv('faux_data_lake/recommendation_engine_analysis.csv')
+    transaction_data.to_csv('faux_data_lake/recommendation_engine_analysis.csv')
     
 
 def demonstrate_xcom_pull(ti): 
@@ -127,8 +129,6 @@ def demonstrate_xcom_pull(ti):
     print(retrieved_api_data)
     print(">>>>>>>>>>>>>>>>>>>>>>>>>>")
 
-pull_product_data()
-pull_transaction_data()
-pull_user_data()
-
+get_basket_analysis_dataset()
+get_recommendation_engine_dataset()
 
