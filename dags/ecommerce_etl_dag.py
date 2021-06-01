@@ -1,6 +1,6 @@
 from airflow import DAG
-from airflow.operators.bash import BashOperator
-from airflow.operators.python PythonOperator
+from airflow.operators.http_operator import SimpleHttpOperator
+from airflow.operators.python import PythonOperator,
 from airflow.utils.task_group import TaskGroup
 
 from datetime import datetime, timedelta
@@ -35,3 +35,13 @@ with DAG("ECOMMERCE_ETL_DAG", default_args=default_args, schedule_interval=timed
             task_id='extract_teansaction_task',
             python_callable=pull_transaction_data
         )
+        #demonstrate HttpOperator. In practice pulling data with lots of records may require
+        #SFTPOperator or PythonOperator that can pull process and store data.
+        demo_get_from_api = SimpleHttpOperator(
+        task_id="demo_get_from_api",
+        http_conn_id="atlassian_marketplace",
+        endpoint="/users", 
+        method="GET",
+        xcom_push=True,
+        log_response=True
+    )

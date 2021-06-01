@@ -122,7 +122,10 @@ def get_recommendation_engine_dataset():
     transaction_lean_customer_data.to_csv('faux_data_lake/recommendation_engine_analysis.csv')
     
 
-
+def demonstrate_xcom_pull(ti): 
+    retrieved_api_data = ti.xcom_pull(key=None, task_ids='demo_get_from_api')
+    print(retrieved_api_data)
+    print(">>>>>>>>>>>>>>>>>>>>>>>>>>")
 
 
 
