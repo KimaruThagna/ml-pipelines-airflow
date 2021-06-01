@@ -105,7 +105,12 @@ def get_basket_analysis_dataset():
     grouped_data = transaction_data.groupby(['purchase_id','product_id']).count().reset_index()
     # pivot to have purchase ID as index, product IDs as columns and quantity(mean) as the values
     # for basket analysis, one is considering what goes together(cause and effect). So average is a better agg function
-    grouped_data.pivot(index='purchase_id', columns='product_id',values='quantity')
+    grouped_data = pd.pivot_table(grouped_data,index='purchase_id', 
+                   columns='product_id',
+                   values='quantity', 
+                   fill_value=0, # empty values that may arise from pivoting
+                   )
+    
     grouped_data.to_csv('faux_data_lake/basket_analysis.csv')
 
 
@@ -119,7 +124,9 @@ def get_recommendation_engine_dataset():
     # for recommendation engines, it may be critical to know what kind of products are bought in large quantities over time
     transaction_data = pd.pivot_table(transaction_data,index='user_id', 
                    columns='product_id',
-                   values='quantity', aggfunc=np.sum)
+                   values='quantity', 
+                   fill_value=0,
+                   aggfunc=np.sum)
     
     transaction_data.to_csv('faux_data_lake/recommendation_engine_analysis.csv')
     
