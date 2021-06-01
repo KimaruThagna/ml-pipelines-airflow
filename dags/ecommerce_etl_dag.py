@@ -1,7 +1,6 @@
 from airflow import DAG
 from airflow.operators.http_operator import SimpleHttpOperator
-from airflow.contrib.operators.sftp_operator import SFTPOperation
-from airflow.contrib.operators.sftp_operator import SFTPOperator
+from airflow.operators.postgres_operator import PostgresOperator
 from airflow.operators.python import PythonOperator, task,
 from airflow.utils.task_group import TaskGroup
 
@@ -68,7 +67,10 @@ with DAG("ECOMMERCE_ETL_DAG", default_args=default_args, schedule_interval=timed
         
     # processing/transformation tasks
     with TaskGroup("processing_group") as processing_group:
-        
+        create_table_platinum_customer_table = PostgresOperator(
+                    task_id='create_table_platinum_customer_table',
+                    sql=create_table_query,
+                        )
         demo_xcom_pull = PythonOperator(
             task_id='demo_xcom_pull',
             python_callable=demonstrate_xcom_pull

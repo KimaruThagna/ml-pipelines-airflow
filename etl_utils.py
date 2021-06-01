@@ -5,6 +5,17 @@ import psycopg2
 '''
 The faux data lake is to represent a cloud based storage like s3 or GCS
 '''
+
+create_table_query = """
+    CREATE TABLE IF NOT EXISTS platinum_customers(
+        user_id INTEGER PRIMARY KEY not null,
+        product_name VARCHAR(200) not null,
+        total_purchase_value FLOAT not null,
+        timestamp date not null default CURRENT_DATE
+    )
+    """
+    
+    
 # modeled as loading job
 def _load_platinum_customers_to_db(df): 
     connection = psycopg2.connect(user="postgres",
@@ -19,20 +30,10 @@ def _load_platinum_customers_to_db(df):
     print("PostgreSQL server information")
     print(connection.get_dsn_parameters(), "\n")
 
-    create_table_query = """
-    CREATE TABLE IF NOT EXISTS platinum_customers(
-        user_id INTEGER PRIMARY KEY not null,
-        product_name VARCHAR(200) not null,
-        total_purchase_value FLOAT not null,
-        timestamp date not null default CURRENT_DATE
-    )
-    """
+    
 
 
     try:
-        cursor.execute(create_table_query)
-        connection.commit()
-        print("Table created successfully in PostgreSQL ")
         df.to_sql("platinum_customers", connection, index=False, if_exists='append')
         
     except (Exception) as error:
@@ -88,7 +89,7 @@ def get_platinum_customer():
     # save to csv file
     platinum_customers.to_csv('faux_data_lake/platinum_customers.csv', index=False)
     # to database
-    #_load_platinum_customers_to_db(platinum_customers)
+    #_load_platinum_customers_to_db(platinum_customers,create_table_query)
     
     
     # special case: FIND BIG SPENDER CUSTOMERS WITH TOTAL VALUE OF 5000 PER PRODUCT
