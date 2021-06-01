@@ -1,5 +1,7 @@
 from airflow import DAG
 from airflow.operators.http_operator import SimpleHttpOperator
+from airflow.contrib.operators.sftp_operator import SFTPOperation
+from airflow.contrib.operators.sftp_operator import SFTPOperator
 from airflow.operators.python import PythonOperator,
 from airflow.utils.task_group import TaskGroup
 
@@ -20,6 +22,8 @@ default_args = {
 }
 
 with DAG("ECOMMERCE_ETL_DAG", default_args=default_args, schedule_interval=timedelta(days=1)) as dag: 
+    sample_base_filepath = ''
+    sample_remote_filepath = ''
     with TaskGroup("Extraction_Tasks") as extraction_group: 
         extract_users_task = PythonOperator(
             task_id='extract_users_task',
@@ -39,9 +43,21 @@ with DAG("ECOMMERCE_ETL_DAG", default_args=default_args, schedule_interval=timed
         #SFTPOperator or PythonOperator that can pull process and store data.
         demo_get_from_api = SimpleHttpOperator(
         task_id="demo_get_from_api",
-        http_conn_id="atlassian_marketplace",
+        http_conn_id="mock-data-server-connection", # the connection will be set in Airflow Ui
         endpoint="/users", 
         method="GET",
         xcom_push=True,
+        headers={"Content-Type": "application/json"},
         log_response=True
     )
+        # sample SFTP for file download
+        
+        # download_file = SFTPOperator(
+        #         task_id=f"download_file",
+        #         ssh_conn_id="file_server",
+        #         local_filepath=f"{sample_base_filepath}/filename",
+        #         remote_filepath=f"{sample_base_filepath}/filename",
+        #         operation=SFTPOperation.GET,
+        #         create_intermediate_dirs=True,
+                
+        #         )
