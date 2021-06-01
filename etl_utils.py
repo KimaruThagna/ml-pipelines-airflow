@@ -120,7 +120,7 @@ def get_basket_analysis_dataset():
                    columns='product_id',
                    values='quantity', 
                    fill_value=0, # empty values that may arise from pivoting
-                   )
+                   ).add_suffix('_product_id')
     
     grouped_data.to_csv('faux_data_lake/basket_analysis.csv', index=False)
 
@@ -137,7 +137,7 @@ def get_recommendation_engine_dataset():
                    columns='product_id',
                    values='quantity', 
                    fill_value=0,
-                   aggfunc=np.sum)
+                   aggfunc=np.sum).add_suffix('_product_id')
     
     transaction_data.to_csv('faux_data_lake/recommendation_engine_analysis.csv', index=False)
     
