@@ -80,19 +80,30 @@ def get_platinum_customer():
     #retain only the columns necessary for analysis
     lean_customer_data = enriched_customer_data[['user_id',
                                                      'total_purchase_value',
-                                                     'product_name',
                                                      ]]
     # get total purchase value per customer
-    lean_customer_data = lean_customer_data.groupby('user_id', 
-                                                  as_index=False).agg(
-                                                      {'total_purchase_value': ['sum'],
-                                                       'product_name':pd.Series.mode}) # most common product
-    # filter platinum customers PREDICATE: total_purchase_value>=5000
-    platinum_customers = lean_customer_data.loc[lean_customer_data['total_purchase_value'] >= 5000]
+    lean_customer_data = lean_customer_data.groupby(['user_id']).sum().reset_index()
+    # filter platinum customers PREDICATE: total_purchase_value>=10000
+    platinum_customers = lean_customer_data.loc[lean_customer_data['total_purchase_value'] >= 10000]
     # save to csv file
-    platinum_customers.to_csv('aux_data_lake/platinum_customers')
+    platinum_customers.to_csv('faux_data_lake/platinum_customers.csv', index=False)
     # to database
-    _load_platinum_customers_to_db(platinum_customers)
+    #_load_platinum_customers_to_db(platinum_customers)
+    
+    
+    # special case: FIND BIG SPENDER CUSTOMERS WITH TOTAL VALUE OF 5000 PER PRODUCT
+    
+    special_customer_data = enriched_customer_data[['user_id',
+                                                     'total_purchase_value',
+                                                     'product_name',
+                                                     ]]
+    
+    special_customer_data = special_customer_data.groupby(['user_id','product_name']).sum().reset_index()
+    
+    special_customers = special_customer_data.loc[special_customer_data['total_purchase_value'] >= 5000]
+    # save to csv file
+    special_customers.to_csv('faux_data_lake/platinum_customers.csv', index=False)
+    
     
     
 def get_basket_analysis_dataset(): 
@@ -111,7 +122,7 @@ def get_basket_analysis_dataset():
                    fill_value=0, # empty values that may arise from pivoting
                    )
     
-    grouped_data.to_csv('faux_data_lake/basket_analysis.csv')
+    grouped_data.to_csv('faux_data_lake/basket_analysis.csv', index=False)
 
 
 def get_recommendation_engine_dataset(): 
@@ -128,7 +139,7 @@ def get_recommendation_engine_dataset():
                    fill_value=0,
                    aggfunc=np.sum)
     
-    transaction_data.to_csv('faux_data_lake/recommendation_engine_analysis.csv')
+    transaction_data.to_csv('faux_data_lake/recommendation_engine_analysis.csv', index=False)
     
 
 def demonstrate_xcom_pull(ti): 
@@ -136,6 +147,4 @@ def demonstrate_xcom_pull(ti):
     print(retrieved_api_data)
     print(">>>>>>>>>>>>>>>>>>>>>>>>>>")
 
-get_basket_analysis_dataset()
-get_recommendation_engine_dataset()
-
+get_platinum_customer()

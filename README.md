@@ -12,7 +12,7 @@ Question 1 is implemented using `pd.merge()` to get the combined dataset and `df
 
 To get the platinum customer, we apply a filter 
 
-`final_df = df.loc[df['total_purchase_value']>=5000]`
+`final_df = df.loc[df['total_purchase_value']>=10000]`
 
 Both question 2 and 3 are achieved using Pandas **Pivot Tables** `pd.pivtot_table()`
 
