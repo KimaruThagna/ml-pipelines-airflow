@@ -146,5 +146,3 @@ def demonstrate_xcom_pull(ti):
     retrieved_api_data = ti.xcom_pull(key=None, task_ids='demo_get_from_api')
     print(retrieved_api_data)
     print(">>>>>>>>>>>>>>>>>>>>>>>>>>")
-
-get_platinum_customer()

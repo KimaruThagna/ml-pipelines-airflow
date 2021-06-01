@@ -2,7 +2,7 @@ from airflow import DAG
 from airflow.operators.http_operator import SimpleHttpOperator
 from airflow.contrib.operators.sftp_operator import SFTPOperation
 from airflow.contrib.operators.sftp_operator import SFTPOperator
-from airflow.operators.python import PythonOperator,
+from airflow.operators.python import PythonOperator, task,
 from airflow.utils.task_group import TaskGroup
 
 from datetime import datetime, timedelta
@@ -65,3 +65,26 @@ with DAG("ECOMMERCE_ETL_DAG", default_args=default_args, schedule_interval=timed
         #         create_intermediate_dirs=True,
                 
         #         )
+        
+    # processing/transformation tasks
+    with TaskGroup("processing_tasks") as processing_tasks:
+        
+        demo_xcom_pull = PythonOperator(
+            task_id='demo_xcom_pull',
+            python_callable=demonstrate_xcom_pull
+        ) 
+        
+        generate_basket_analysis_csv_task = PythonOperator(
+            task_id='generate_basket_analysis_csv_task',
+            python_callable=get_basket_analysis_dataset
+        )
+        
+        generate_recommendation_engine_csv_task = PythonOperator(
+            task_id='generate_recommendation_engine_csv_task',
+            python_callable=get_recommendation_engine_dataset
+        )
+        
+        get_platinum_customer_task = PythonOperator(
+            task_id='get_platinum_customer_task',
+            python_callable=get_platinum_customer
+        )
