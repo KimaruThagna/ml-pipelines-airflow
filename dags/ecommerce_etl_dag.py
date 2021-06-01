@@ -27,7 +27,7 @@ with DAG("ECOMMERCE_ETL_DAG", default_args=default_args, schedule_interval=timed
     sample_base_filepath = ''
     sample_remote_filepath = ''
 
-    with TaskGroup("Extraction_Tasks") as extraction_group: 
+    with TaskGroup("extraction_group") as extraction_group: 
         extract_users_task = PythonOperator(
             task_id='extract_users_task',
             python_callable=pull_user_data
@@ -67,7 +67,7 @@ with DAG("ECOMMERCE_ETL_DAG", default_args=default_args, schedule_interval=timed
         #         )
         
     # processing/transformation tasks
-    with TaskGroup("processing_tasks") as processing_tasks:
+    with TaskGroup("processing_group") as processing_group:
         
         demo_xcom_pull = PythonOperator(
             task_id='demo_xcom_pull',
@@ -88,3 +88,16 @@ with DAG("ECOMMERCE_ETL_DAG", default_args=default_args, schedule_interval=timed
             task_id='get_platinum_customer_task',
             python_callable=get_platinum_customer
         )
+        
+    # we may want to send an email with files after processing. This can be done via an EmailOperator
+    '''
+        send_sample_dataset_email = EmailOperator(task_id='send_sample_dataset_email',
+            to='thagana44@gmail.com',
+            subject='Ecomm Industries Pipeline Report',
+            html_content=""" <h1>Ecomm Industries Daily Summary and error report for {{ ds }}</h1> """,
+            files=[f'{sample_base_filepath}/summary_data.csv', f'{sample_base_filepath}/error_logs.csv'],
+            )
+        
+    '''
+    
+extraction_group >> processing_group
