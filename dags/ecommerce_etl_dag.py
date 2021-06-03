@@ -26,7 +26,7 @@ with DAG(
     schedule_interval=timedelta(days=1)
 ) as dag:
 
-    sample_base_filepath = ""
+    sample_base_filepath = "../faux_data_lake"
     sample_remote_filepath = ""
 
     with TaskGroup("extraction_group") as extraction_group:
@@ -69,10 +69,13 @@ with DAG(
     # processing/transformation tasks
     with TaskGroup("processing_group") as processing_group:
         create_table_platinum_customer_table = PostgresOperator(
-            task_id="create_table_platinum_customer_table", sql=create_table_query, )
+            task_id="create_table_platinum_customer_table",
+            sql=create_table_query 
+            )
 
         demo_xcom_pull = PythonOperator(
-            task_id="demo_xcom_pull", python_callable=demonstrate_xcom_pull
+            task_id="demo_xcom_pull", 
+            python_callable=demonstrate_xcom_pull
         )
 
         generate_basket_analysis_csv_task = PythonOperator(
@@ -97,7 +100,7 @@ with DAG(
             to='thagana44@gmail.com',
             subject='Ecomm Industries Pipeline Report',
             html_content=""" <h1>Ecomm Industries Daily Summary and error report for {{ ds }}</h1> """,
-            files=[f'{sample_base_filepath}/summary_data.csv', f'{sample_base_filepath}/error_logs.csv'],
+            files=[f'{sample_base_filepath}/basket_analysis.csv', f'{sample_base_filepath}/recommendation_engine_analysis.csv'],
             )
 
     '''
