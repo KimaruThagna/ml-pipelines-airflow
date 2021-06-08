@@ -69,8 +69,9 @@ with DAG(
     # processing/transformation tasks
     with TaskGroup("processing_group") as processing_group:
         create_table_platinum_customer_table = PostgresOperator(
+            postgres_connection_id='mock_remote_db',
             task_id="create_table_platinum_customer_table",
-            sql=create_table_query 
+            sql=create_table_query # can also be path to file eg sql/create_table_platinum_customer_table.sql
             )
 
         demo_xcom_pull = PythonOperator(
