@@ -74,10 +74,6 @@ with DAG(
             sql=create_table_query # can also be path to file eg sql/create_table_platinum_customer_table.sql
             )
 
-        demo_xcom_pull = PythonOperator(
-            task_id="demo_xcom_pull", 
-            python_callable=demonstrate_xcom_pull
-        )
 
         generate_basket_analysis_csv_task = PythonOperator(
             task_id="generate_basket_analysis_csv_task",
