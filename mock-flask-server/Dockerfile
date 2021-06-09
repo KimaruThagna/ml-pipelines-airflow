@@ -1,9 +1,8 @@
 FROM python:3.8.3-alpine
 
-RUN mkdir -p code
-WORKDIR code
-COPY /app .
+WORKDIR /app
+COPY . .
 
 RUN pip install -r requirements.txt
 
-ENTRYPOINT python app.py
+CMD [ "python3","app.py" ]
