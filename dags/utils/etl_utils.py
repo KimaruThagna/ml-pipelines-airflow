@@ -1,5 +1,5 @@
 import pandas as pd
-import requests
+import requests, os
 import numpy as np
 import psycopg2
 '''
@@ -9,7 +9,6 @@ The faux data lake is to represent a cloud based storage like s3 or GCS
 create_table_query = """
     CREATE TABLE IF NOT EXISTS platinum_customers(
         user_id INTEGER PRIMARY KEY not null,
-        product_name VARCHAR(200) not null,
         total_purchase_value FLOAT not null,
         timestamp date not null default CURRENT_DATE
     )
@@ -18,11 +17,12 @@ create_table_query = """
     
 # modeled as loading job
 def _load_platinum_customers_to_db(df): 
-    connection = psycopg2.connect(user="postgres",
-                                  password="postgres",
-                                  host="127.0.0.1",
-                                  port="5432",
-                                  database="customers")
+    print(os.environ.get("POSTGRES_USER"))
+    connection = psycopg2.connect(user=os.environ.get("POSTGRES_USER"),
+                                  password=os.environ.get("POSTGRES_PASSWORD"),
+                                  host="remote_db",
+                                  port=os.environ.get("DB_PORT"),
+                                  database=os.environ.get("DB_NAME"))
 
      
     cursor = connection.cursor()
@@ -34,7 +34,7 @@ def _load_platinum_customers_to_db(df):
 
 
     try:
-        df.to_sql("platinum_customers", connection, index=False, if_exists='append')
+        df.to_sql("platinum_customers", connection, index=False)
         
     except (Exception) as error:
         print("Error while connecting to PostgreSQL", error)
@@ -89,7 +89,7 @@ def get_platinum_customer():
     # save to csv file
     platinum_customers.to_csv('faux_data_lake/platinum_customers.csv', index=False)
     # to database
-    #_load_platinum_customers_to_db(platinum_customers,create_table_query)
+    _load_platinum_customers_to_db(platinum_customers)
     
     
     # special case: FIND BIG SPENDER CUSTOMERS WITH TOTAL VALUE OF 5000 PER PRODUCT
@@ -103,7 +103,7 @@ def get_platinum_customer():
     
     special_customers = special_customer_data.loc[special_customer_data['total_purchase_value'] >= 5000]
     # save to csv file
-    special_customers.to_csv('faux_data_lake/platinum_customers.csv', index=False)
+    special_customers.to_csv('faux_data_lake/platinum_customers_per_product.csv', index=False)
     
     
     

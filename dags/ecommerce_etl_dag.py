@@ -5,7 +5,7 @@ from airflow.operators.http_operator import SimpleHttpOperator
 from airflow.operators.postgres_operator import PostgresOperator
 from airflow.operators.python import PythonOperator
 from airflow.utils.task_group import TaskGroup
-from ..etl_utils import *
+from utils.etl_utils import *
 
 
 default_args = {
@@ -50,7 +50,7 @@ with DAG(
             http_conn_id="mock-data-server-connection",
             endpoint="/users",
             method="GET",
-            xcom_push=True,
+            do_xcom_push=True,
             headers={"Content-Type": "application/json"},
             log_response=True,
         )
@@ -69,7 +69,7 @@ with DAG(
     # processing/transformation tasks
     with TaskGroup("processing_group") as processing_group:
         create_table_platinum_customer_table = PostgresOperator(
-            postgres_connection_id='mock_remote_db',
+            postgres_conn_id='mock_remote_db',
             task_id="create_table_platinum_customer_table",
             sql=create_table_query # can also be path to file eg sql/create_table_platinum_customer_table.sql
             )
