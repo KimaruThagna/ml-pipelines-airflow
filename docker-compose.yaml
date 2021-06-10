@@ -144,14 +144,18 @@ services:
 
   mock-api:
     build: ./mock-flask-server
+    hostname: mock-api
+    container_name: mock-api
     ports:
         - "5000:5000"
     volumes:
         - ./mock-flask-server:/code
   remote_db:
     image: postgres:11-alpine
+    hostname: remote_db
+    container_name: remote_db
     ports:
-      - "5433:5433"
+      - "5432:5432"
     volumes:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
       - ./postgres_data:/var/lib/postgresql/data/

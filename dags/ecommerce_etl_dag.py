@@ -6,12 +6,12 @@ from airflow.operators.postgres_operator import PostgresOperator
 from airflow.operators.python import PythonOperator
 from airflow.utils.task_group import TaskGroup
 from utils.etl_utils import *
-
+from airflow.utils.dates import days_ago
 
 default_args = {
     "owner": "airflow",
     "depends_on_past": False,
-    "start_date": datetime(2020, 8, 13),
+    "start_date": days_ago(1),
     "email": ["thagana44@gmail.com"],
     "email_on_failure": False,
     "email_on_retry": False,
@@ -38,8 +38,8 @@ with DAG(
             task_id="extract_products_task", python_callable=pull_product_data
         )
 
-        extract_teansaction_task = PythonOperator(
-            task_id="extract_teansaction_task",
+        extract_transaction_task = PythonOperator(
+            task_id="extract_transaction_task",
             python_callable=pull_transaction_data)
 
         # demonstrate HttpOperator. In practice pulling data with lots of records may require
@@ -67,14 +67,13 @@ with DAG(
         #         )
 
     # processing/transformation tasks
-    with TaskGroup("processing_group") as processing_group:
-        create_table_platinum_customer_table = PostgresOperator(
+    create_table_platinum_customer_table = PostgresOperator(
             postgres_conn_id='mock_remote_db',
             task_id="create_table_platinum_customer_table",
             sql=create_table_query # can also be path to file eg sql/create_table_platinum_customer_table.sql
             )
 
-
+    with TaskGroup("processing_group") as processing_group:
         generate_basket_analysis_csv_task = PythonOperator(
             task_id="generate_basket_analysis_csv_task",
             python_callable=get_basket_analysis_dataset,
@@ -102,4 +101,4 @@ with DAG(
 
     '''
 
-extraction_group >> processing_group
+extraction_group >> create_table_platinum_customer_table >> processing_group
