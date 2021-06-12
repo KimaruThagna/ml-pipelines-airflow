@@ -2,6 +2,9 @@ import pandas as pd
 import requests, os
 import numpy as np
 import psycopg2
+from airflow.models import Variable
+from sqlalchemy import create_engine
+from sqlalchemy.sql.type_api import Variant
 '''
 The faux data lake is to represent a cloud based storage like s3 or GCS
 '''
@@ -17,12 +20,10 @@ create_table_query = """
     
 # modeled as loading job
 def _load_platinum_customers_to_db(df): 
-    print(os.environ.get("POSTGRES_USER"))
-    connection = psycopg2.connect(user=os.environ.get("POSTGRES_USER"),
-                                  password=os.environ.get("POSTGRES_PASSWORD"),
+    connection = psycopg2.connect(user=Variable.get("POSTGRES_USER"),
+                                  password=Variable.get("POSTGRES_PASSWORD"),
                                   host="remote_db",
-                                  port=os.environ.get("DB_PORT"),
-                                  database=os.environ.get("DB_NAME"))
+                                  database=Variable.get("DB_NAME"))
 
      
     cursor = connection.cursor()
@@ -34,7 +35,9 @@ def _load_platinum_customers_to_db(df):
 
 
     try:
-        df.to_sql("platinum_customers", connection, index=False)
+        con = create_engine(f'postgresql://{Variable.get("POSTGRES_USER")}:{Variable.get("POSTGRES_PASSWORD")}@remote_db:{Variable.get("DB_PORT")}/{Variable.get("DB_NAME")}')
+        df.to_sql("platinum_customers", con, index=False,if_exists='append')
+
         
     except (Exception) as error:
         print("Error while connecting to PostgreSQL", error)

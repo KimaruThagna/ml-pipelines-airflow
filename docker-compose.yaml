@@ -58,6 +58,7 @@ x-airflow-common:
   depends_on:
     - redis
     - postgres
+    - remote_db
       
 
 services:
@@ -161,10 +162,11 @@ services:
       - ./postgres_data:/var/lib/postgresql/data/
     environment:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - PGPASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${DB_NAME}
       - PGPORT=${DB_PORT}
       - POSTGRES_USER=${POSTGRES_USER}
-    restart: "on-failure"
+    restart: always
     
 
 volumes:
